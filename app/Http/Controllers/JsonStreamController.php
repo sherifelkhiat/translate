@@ -54,21 +54,19 @@ class JsonStreamController extends Controller
                 //Detect language
                 $tr->translate($name);
     
-                if($tr->getLastDetectedSource() != 'ar'){
-                    $this->translateAndSave($tr, $name, $hit, $nameId, 'en');
-                }else{
-                    $this->translateAndSave($tr, $name, $hit, $nameId, 'ar');
-                }
+                $this->translateAndSave($tr, $name, $hit, $nameId);
             }
         }
+
+        return "Data translated and Save to DB";
     }
 
     public function translateAndSave($tr, $name, $hit, $nameId, $targetLang)
     {
-        if($targetLang == 'ar'){
-            $translatedName = $tr->setSource('ar')->setTarget('en')->translate($name);
-        } else {
+        if($tr->getLastDetectedSource() == 'en'){
             $translatedName = $tr->setSource('en')->setTarget('ar')->translate($name);
+        } else {
+            $translatedName = $tr->setSource('ar')->setTarget('en')->translate($name);
         }
 
         DB::table('names')->insert(
